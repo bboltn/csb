@@ -1,8 +1,0 @@
-.DS_Store
-.Python
-Export/*
-Import/*
-bin/*
-include/*
-lib/*
-.gitignore
