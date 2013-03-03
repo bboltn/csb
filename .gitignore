@@ -5,3 +5,4 @@ Import/*
 bin/*
 include/*
 lib/*
+.gitignore
