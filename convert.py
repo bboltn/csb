@@ -1,5 +1,15 @@
 from bs4 import BeautifulSoup
-import io, time, re, urllib, urlparse, os, sys
+import io, time, re, urllib, urlparse, os, sys, argparse
+
+parser = argparse.ArgumentParser(description='Converts Blogger export to seperate xml files.')
+parser.add_argument("Input", help="The Blogger export file")
+parser.add_argument("DomainName", help="The domain name of the blogs")
+parser.add_argument("Destination", default="Export", help="Where the files should be saved")
+
+args = parser.parse_args()
+export_path = args.Destination
+import_path = args.Input
+domain_name = args.DomainName
 
 def format_time(entry, timefield):
     time_obj = time.strptime(entry(timefield)[0].string[0:16], "%Y-%m-%dT%H:%M")
@@ -7,15 +17,15 @@ def format_time(entry, timefield):
 
 def get_image_and_content(entry):
     content = entry("content")[0].string
-    if not os.path.isdir("Export/images"):
-        os.mkdir("Export/images")
+    if not os.path.isdir("%s/images" % export_path):
+        os.mkdir("%s/images"  % export_path)
 
     soup = BeautifulSoup(content)
     imgs = soup("img")
     for img in imgs:
         image_source = img["src"]
         filename = get_name_from_path(image_source, "images")
-        urllib.urlretrieve(image_source, "Export/%s" % filename)
+        urllib.urlretrieve(image_source, "%s/%s" % (export_path, filename))
         content = content.replace(image_source, filename)
 
     return content
@@ -36,13 +46,13 @@ def create_file_name(pub, title):
     else:
         filename_xml = "%s.xml" % (pub)
 
-    return "Export/" + filename_xml
+    return "%s/%s" % (export_path, filename_xml)
 
 def get_link_to_me(entry):
     links = entry("link")
 
     for link in links:
-        if link["rel"] == ["alternate"] and "fountaincitycode.com" in link["href"]:
+        if link["rel"] == ["alternate"] and domain_name in link["href"]:
             return link["href"]
 
     return ""
@@ -96,6 +106,6 @@ def progress(count, total):
     sys.stdout.flush()
 
 #main
-soup = BeautifulSoup(get_file_contents("Import/blog-03-03-2013.xml"))
+soup = BeautifulSoup(get_file_contents(import_path))
 count = parse_entries(soup("entry"))
 print "\nFound %d posts" % count
