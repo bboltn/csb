@@ -24,6 +24,7 @@ optional arguments:
 
 - Pip
 - Homebrew
+- virtual env
 
 ## Install
 
