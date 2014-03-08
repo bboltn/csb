@@ -19,3 +19,16 @@ optional arguments:
 ./convert.py blog-02-15-2014.xml ~/blog/progrn.github.io/ --test
 
 ```
+
+## Requirements
+
+- Pip
+- Homebrew
+
+## Install
+
+```
+cd csb
+virtualenv .
+pip install -r requirements.txt
+```
